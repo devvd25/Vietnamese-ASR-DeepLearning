@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f0fdfa" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#071a1a" media="(prefers-color-scheme: dark)">
+    <title>Phụ đề YouTube realtime</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main>
+      <header class="hero">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M4 12v1M8 8v9M12 5v14M16 8v9M20 12v1"/>
+          </svg>
+        </div>
+        <div>
+          <p class="eyebrow">DEEP LEARNING · STT 19</p>
+          <h1>Phụ đề YouTube realtime</h1>
+        </div>
+      </header>
+
+      <section class="status-card" aria-labelledby="connection-title">
+        <div class="status-row">
+          <span id="status-dot" class="status-dot" aria-hidden="true"></span>
+          <div class="status-copy">
+            <h2 id="connection-title">Trạng thái</h2>
+            <p id="status-message" role="status" aria-live="polite" aria-atomic="true">Đang kiểm tra server local…</p>
+          </div>
+        </div>
+        <p class="privacy">Audio chỉ được xử lý trên máy này.</p>
+      </section>
+
+      <form id="caption-form">
+        <div class="field">
+          <label for="model">Mô hình nhận dạng</label>
+          <select id="model" name="model">
+            <option value="wav2vec2_vietnamese">Wav2Vec2 — nhanh & chính xác hơn</option>
+            <option value="whisper_fine_tuned">PhoWhisper — VietSpeech 10h</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="chunk-seconds">Độ trễ phụ đề</label>
+          <select id="chunk-seconds" name="chunk-seconds">
+            <option value="3">Nhanh · khoảng 3 giây</option>
+            <option value="4" selected>Cân bằng · khoảng 4 giây</option>
+            <option value="5">Ổn định · khoảng 5 giây</option>
+            <option value="6">Ngữ cảnh dài · khoảng 6 giây</option>
+          </select>
+          <p class="hint">Đoạn dài hơn có thêm ngữ cảnh nhưng phụ đề xuất hiện chậm hơn.</p>
+        </div>
+
+        <label class="learning-option" for="learning-enabled">
+          <input id="learning-enabled" name="learning-enabled" type="checkbox" checked>
+          <span class="learning-copy">
+            <strong>Học có kiểm soát</strong>
+            <span>Chỉ lưu local khi PhoWhisper và Wav2Vec2 cùng nhận ra một nội dung.</span>
+          </span>
+        </label>
+
+        <div class="actions">
+          <button id="start-button" class="button button-primary" type="submit">
+            <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <span>Bắt đầu phụ đề</span>
+          </button>
+          <button id="stop-button" class="button button-danger" type="button" disabled>
+            <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M6 6h12v12H6z"/></svg>
+            <span>Dừng</span>
+          </button>
+        </div>
+        <button id="clear-button" class="button button-quiet" type="button">Xóa phụ đề đang hiển thị</button>
+      </form>
+
+      <footer>
+        <span class="server-address" translate="no">127.0.0.1:8765</span>
+        <span>Chrome 116+</span>
+      </footer>
+    </main>
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>

@@ -1,0 +1,61 @@
+project:
+  name: Vietnamese AI Speech Recognition
+  experiment_name: phowhisper_youtube_consensus_candidate
+
+model:
+  name: checkpoints/vivos_cv21_vietspeech_10h_phowhisper_adaptation/best
+  display_name: PhoWhisper — YouTube continual candidate
+  task: transcribe
+  language: Vietnamese
+  sample_rate: 16000
+
+data:
+  dataset_name: human_replay_plus_youtube_consensus
+  dataset_version: "local controlled continual learning v1"
+  root: data/processed/youtube_learning
+  max_audio_seconds: 28
+  max_transcript_characters: 500
+  max_train_samples: null
+  max_validation_samples: null
+  max_test_samples: null
+
+training:
+  epochs: 2
+  learning_rate: 0.0000002
+  run_validation: false
+  train_batch_size: 1
+  eval_batch_size: 1
+  gradient_accumulation_steps: 4
+  weight_decay: 0.01
+  warmup_steps: 10
+  max_grad_norm: 1.0
+  gradient_checkpointing: true
+  eval_steps: 100
+  save_steps: 100
+  logging_steps: 10
+  save_total_limit: 2
+  load_best_model_at_end: false
+  dataloader_num_workers: 0
+  seed: 42
+
+evaluation:
+  metrics: [wer, cer]
+  generation_num_beams: 1
+  max_length: 225
+  no_repeat_ngram_size: 3
+  repetition_penalty: 1.05
+
+youtube_learning:
+  manifest: data/processed/youtube_learning/train.jsonl
+  base_processed_data: data/processed/vivos_cv21_vietspeech_10h
+  minimum_samples: 20
+  replay_per_youtube_sample: 4
+
+paths:
+  processed_data: data/processed/youtube_continual_candidate
+  checkpoint_dir: checkpoints/phowhisper_youtube_continual_candidate
+  best_checkpoint: checkpoints/phowhisper_youtube_continual_candidate/best
+  metrics_dir: outputs/youtube_continual/tables
+  predictions_dir: outputs/youtube_continual/predictions
+  figures_dir: outputs/youtube_continual/figures
+  reports_dir: outputs/youtube_continual/reports

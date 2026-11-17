@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "Vietnamese ASR Live Captions",
+  "version": "1.0.0",
+  "description": "Tạo phụ đề tiếng Việt realtime cho YouTube bằng hai model ASR chạy local.",
+  "minimum_chrome_version": "116",
+  "permissions": [
+    "activeTab",
+    "offscreen",
+    "storage",
+    "tabCapture"
+  ],
+  "host_permissions": [
+    "http://127.0.0.1:8765/*",
+    "https://www.youtube.com/*"
+  ],
+  "background": {
+    "service_worker": "service-worker.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "Phụ đề YouTube realtime",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; connect-src http://127.0.0.1:8765 ws://127.0.0.1:8765"
+  }
+}

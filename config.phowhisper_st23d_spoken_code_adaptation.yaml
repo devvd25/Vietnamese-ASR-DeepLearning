@@ -1,0 +1,66 @@
+project:
+  name: Vietnamese AI Speech Recognition
+  experiment_name: phowhisper_st23d_spoken_code_supervised_adaptation
+
+model:
+  name: checkpoints/vivos_cv21_phowhisper_adaptation/best
+  task: transcribe
+  language: Vietnamese
+  sample_rate: 16000
+
+wav2vec2_model:
+  name: nguyenvulebinh/wav2vec2-base-vietnamese-250h
+  architecture: wav2vec2-ctc
+  sample_rate: 16000
+  decoder:
+    enabled: true
+    language_model_path: models/language_models/vietnamese_4gram/vi_lm_4grams.bin
+    alpha: 1.0
+    beta: 1.0
+    beam_width: 100
+    domain_codes: [ST23D]
+
+data:
+  dataset_name: st23d_spoken_code_supervised_adaptation
+  dataset_version: "1 labelled target recording with spoken-code label + independent validation subset"
+  max_audio_seconds: 30
+  max_train_samples: null
+  max_validation_samples: null
+
+text_normalization:
+  domain_codes: [ST23D]
+
+training:
+  epochs: 1
+  learning_rate: 0.000001
+  train_batch_size: 1
+  eval_batch_size: 1
+  gradient_accumulation_steps: 1
+  weight_decay: 0.0
+  warmup_steps: 0
+  max_grad_norm: 1.0
+  gradient_checkpointing: true
+  eval_steps: 64
+  save_steps: 16
+  logging_steps: 8
+  save_total_limit: 4
+  load_best_model_at_end: false
+  dataloader_num_workers: 0
+  seed: 42
+
+evaluation:
+  metrics: [wer, cer]
+  generation_num_beams: 1
+  max_length: 225
+  no_repeat_ngram_size: 3
+  repetition_penalty: 1.05
+  compare_beam_sizes: [1, 5]
+
+paths:
+  processed_data: data/processed/st23d_phowhisper_spoken_code_adaptation
+  checkpoint_dir: checkpoints/phowhisper_st23d_spoken_code_adaptation
+  best_checkpoint: checkpoints/phowhisper_st23d_spoken_code_adaptation/best
+  metrics_dir: outputs/st23d_spoken_code_adaptation/tables
+  predictions_dir: outputs/st23d_spoken_code_adaptation/predictions
+  figures_dir: outputs/st23d_spoken_code_adaptation/figures
+  reports_dir: outputs/st23d_spoken_code_adaptation/reports/phowhisper

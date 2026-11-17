@@ -1,0 +1,78 @@
+project:
+  name: Vietnamese AI Speech Recognition
+  experiment_name: vivos_cv21_kaggle_speech_wav2vec2_adaptation
+
+model:
+  name: checkpoints/vivos_cv21_phowhisper_adaptation/best
+  task: transcribe
+  language: Vietnamese
+  sample_rate: 16000
+
+wav2vec2_model:
+  name: nguyenvulebinh/wav2vec2-base-vietnamese-250h
+  architecture: wav2vec2-ctc
+  sample_rate: 16000
+  decoder:
+    enabled: true
+    language_model_path: models/language_models/vietnamese_4gram/vi_lm_4grams.bin
+    alpha: 1.0
+    beta: 1.0
+    beam_width: 100
+    domain_codes: [ST23D]
+
+data:
+  dataset_name: vivos_common_voice_kaggle_speech
+  dataset_version: "VIVOS 1.0 + Common Voice Vietnamese 21.0 + Kaggle Vietnamese speech recognition_data"
+  root: data/raw/vivos
+  common_voice_root: data/raw/common-voice-vi-21/vi
+  kaggle_speech_root: data/raw/kaggle_vietnamese_speech_recognition_data
+  kaggle_speech_test_ratio: 0.1
+  max_audio_seconds: 30
+  max_transcript_characters: 500
+  validation_ratio: 0.1
+  common_voice_validation_ratio: 0.1
+  common_voice_test_ratio: 0.1
+  max_train_samples: null
+  max_validation_samples: null
+  max_test_samples: null
+
+text_normalization:
+  domain_codes: [ST23D]
+
+training:
+  epochs: 1
+  learning_rate: 0.000001
+
+wav2vec2_training:
+  epochs: 1
+  learning_rate: 0.000002
+  train_batch_size: 4
+  eval_batch_size: 1
+  gradient_accumulation_steps: 1
+  weight_decay: 0.01
+  warmup_steps: 250
+  max_grad_norm: 1.0
+  gradient_checkpointing: true
+  freeze_feature_encoder: true
+  eval_steps: 4530
+  save_steps: 500
+  logging_steps: 100
+  save_total_limit: 2
+  load_best_model_at_end: false
+  dataloader_num_workers: 0
+  seed: 42
+
+evaluation:
+  metrics: [wer, cer]
+
+paths:
+  processed_data: data/processed/vivos_cv21_kaggle_speech
+  checkpoint_dir: checkpoints/vivos_cv21_kaggle_speech_phowhisper_adaptation
+  best_checkpoint: checkpoints/vivos_cv21_kaggle_speech_phowhisper_adaptation/best
+  wav2vec2_checkpoint_dir: checkpoints/vivos_cv21_kaggle_speech_wav2vec2_adaptation
+  wav2vec2_best_checkpoint: checkpoints/vivos_cv21_kaggle_speech_wav2vec2_adaptation/best
+  metrics_dir: outputs/kaggle_speech/tables
+  predictions_dir: outputs/kaggle_speech/predictions
+  figures_dir: outputs/kaggle_speech/figures
+  reports_dir: outputs/kaggle_speech/reports/phowhisper
+  wav2vec2_reports_dir: outputs/kaggle_speech/reports/wav2vec2

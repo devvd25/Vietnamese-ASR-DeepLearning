@@ -1,0 +1,47 @@
+project:
+  name: Vietnamese AI Speech Recognition
+  experiment_name: wav2vec2_fpt_smoke
+model:
+  name: checkpoints/vivos_cv21_phowhisper_adaptation/best
+  task: transcribe
+  language: Vietnamese
+data:
+  dataset_name: vivos_common_voice_fpt
+  root: data/raw/vivos
+  common_voice_root: data/raw/common-voice-vi-21/vi
+  fpt_root: data/raw/fpt-open-speech
+  max_audio_seconds: 30
+  max_train_samples: 16
+  max_validation_samples: 2
+wav2vec2_model:
+  name: nguyenvulebinh/wav2vec2-base-vietnamese-250h
+wav2vec2_training:
+  epochs: 1
+  learning_rate: 0.000005
+  train_batch_size: 4
+  eval_batch_size: 1
+  gradient_accumulation_steps: 1
+  gradient_checkpointing: true
+  freeze_feature_encoder: true
+  eval_steps: 4
+  save_steps: 4
+  logging_steps: 1
+  save_total_limit: 1
+  load_best_model_at_end: true
+  dataloader_num_workers: 0
+  seed: 42
+training:
+  epochs: 1
+  learning_rate: 0.000001
+  seed: 42
+paths:
+  processed_data: data/processed/vivos_cv21_fpt
+  checkpoint_dir: checkpoints/smoke_phowhisper
+  best_checkpoint: checkpoints/smoke_phowhisper/best
+  wav2vec2_checkpoint_dir: checkpoints/smoke_wav2vec2_fpt
+  wav2vec2_best_checkpoint: checkpoints/smoke_wav2vec2_fpt/best
+  metrics_dir: outputs/smoke_wav2vec2/tables
+  predictions_dir: outputs/smoke_wav2vec2/predictions
+  figures_dir: outputs/smoke_wav2vec2/figures
+  reports_dir: outputs/smoke_wav2vec2/reports/phowhisper
+  wav2vec2_reports_dir: outputs/smoke_wav2vec2/reports/wav2vec2

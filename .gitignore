@@ -1,0 +1,47 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+tmp/
+
+# Datasets and archives
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+*.tar
+*.tar.gz
+*.tgz
+*.zip
+dist/
+
+# Model weights/checkpoints
+checkpoints/*
+!checkpoints/README.md
+*.safetensors
+*.bin
+*.pt
+*.pth
+
+# Secrets and local settings
+.env
+.env.*
+!.env.example
+hf_token*
+wandb/
+
+# Generated runtime/evaluation artifacts
+outputs/*
+!outputs/README.md
+output/
+models/**/.cache/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+~$*
+.vscode/
+.idea/

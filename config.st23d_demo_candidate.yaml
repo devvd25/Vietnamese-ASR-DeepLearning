@@ -1,0 +1,57 @@
+project:
+  name: Vietnamese AI Speech Recognition
+  experiment_name: st23d_demo_candidate_evaluation
+
+model:
+  name: checkpoints/phowhisper_st23d_spoken_code_adaptation/checkpoint-16
+  task: transcribe
+  language: Vietnamese
+  sample_rate: 16000
+
+wav2vec2_model:
+  name: nguyenvulebinh/wav2vec2-base-vietnamese-250h
+  architecture: wav2vec2-ctc
+  sample_rate: 16000
+  decoder:
+    enabled: true
+    language_model_path: models/language_models/vietnamese_4gram/vi_lm_4grams.bin
+    alpha: 1.0
+    beta: 1.0
+    beam_width: 100
+    domain_codes: [ST23D]
+
+data:
+  dataset_name: vivos_common_voice_kaggle_speech
+  dataset_version: "VIVOS 1.0 + Common Voice Vietnamese 21.0 + Kaggle speech"
+  root: data/raw/vivos
+  common_voice_root: data/raw/common-voice-vi-21/vi
+  kaggle_speech_root: data/raw/kaggle_vietnamese_speech_recognition_data
+  max_audio_seconds: 30
+  max_train_samples: null
+  max_validation_samples: null
+  max_test_samples: null
+
+text_normalization:
+  domain_codes: [ST23D]
+  phrase_corrections:
+    "xin chờ tất cả": "xin chào tất cả"
+
+training:
+  epochs: 1
+  learning_rate: 0.000001
+
+evaluation:
+  metrics: [wer, cer]
+  generation_num_beams: 1
+  max_length: 225
+  no_repeat_ngram_size: 3
+  repetition_penalty: 1.05
+
+paths:
+  processed_data: data/processed/vivos_cv21_kaggle_speech
+  checkpoint_dir: checkpoints/phowhisper_st23d_spoken_code_adaptation
+  best_checkpoint: checkpoints/phowhisper_st23d_spoken_code_adaptation/checkpoint-16
+  metrics_dir: outputs/st23d_demo_candidate/tables
+  predictions_dir: outputs/st23d_demo_candidate/predictions
+  figures_dir: outputs/st23d_demo_candidate/figures
+  reports_dir: outputs/st23d_demo_candidate/reports

@@ -1,0 +1,81 @@
+project:
+  name: Vietnamese AI Speech Recognition
+  experiment_name: vivos_cv21_vietspeech_10h_phowhisper_adaptation
+
+model:
+  name: checkpoints/vivos_cv21_phowhisper_adaptation/best
+  display_name: PhoWhisper Base — VietSpeech 10h
+  adaptation_disclosure: PhoWhisper VietSpeech 10h đã sẵn sàng; checkpoint mới được đánh giá độc lập, không bảo đảm độ chính xác 100%.
+  task: transcribe
+  language: Vietnamese
+  sample_rate: 16000
+
+wav2vec2_model:
+  name: nguyenvulebinh/wav2vec2-base-vietnamese-250h
+  revision: 69e9000591623e5a4fc2f502407860bcdc0de0b2
+  architecture: wav2vec2-ctc
+  sample_rate: 16000
+  decoder:
+    enabled: true
+    language_model_path: models/language_models/vietnamese_4gram/vi_lm_4grams.bin
+    unigrams_manifest: data/processed/vivos_cv21_vietspeech_10h/train.jsonl
+    alpha: 1.0
+    beta: 1.0
+    beam_width: 100
+    domain_codes: [ST23D]
+
+data:
+  dataset_name: vivos_common_voice_vietspeech_subset
+  dataset_version: "VIVOS 1.0 + Common Voice Vietnamese 21.0 + VietSpeech 10h subset"
+  root: data/raw/vietspeech_subset_10h
+  max_audio_seconds: 28
+  max_transcript_characters: 500
+  max_train_samples: null
+  max_validation_samples: null
+  max_test_samples: null
+
+text_normalization:
+  domain_codes: [ST23D]
+
+training:
+  epochs: 1
+  learning_rate: 0.0000005
+  run_validation: false
+  train_batch_size: 1
+  eval_batch_size: 1
+  gradient_accumulation_steps: 4
+  weight_decay: 0.01
+  warmup_steps: 250
+  max_grad_norm: 1.0
+  gradient_checkpointing: true
+  eval_steps: 3000
+  save_steps: 3000
+  logging_steps: 100
+  save_total_limit: 2
+  load_best_model_at_end: false
+  dataloader_num_workers: 0
+  seed: 42
+
+youtube_learning:
+  minimum_samples: 20
+  replay_per_youtube_sample: 4
+  agreement_threshold: 0.85
+  confidence_threshold: 0.45
+
+evaluation:
+  metrics: [wer, cer]
+  generation_num_beams: 1
+  max_length: 225
+  no_repeat_ngram_size: 3
+  repetition_penalty: 1.05
+  compare_beam_sizes: [1, 5]
+
+paths:
+  processed_data: data/processed/vivos_cv21_vietspeech_10h
+  checkpoint_dir: checkpoints/vivos_cv21_vietspeech_10h_phowhisper_adaptation
+  best_checkpoint: checkpoints/vivos_cv21_vietspeech_10h_phowhisper_adaptation/best
+  metrics_dir: outputs/vietspeech_10h/tables
+  predictions_dir: outputs/vietspeech_10h/predictions
+  figures_dir: outputs/vietspeech_10h/figures
+  reports_dir: outputs/vietspeech_10h/reports/phowhisper
+  youtube_learning_data: data/processed/youtube_learning

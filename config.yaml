@@ -1,0 +1,81 @@
+project:
+  name: Vietnamese AI Speech Recognition
+  experiment_name: vivos_phowhisper_base_full
+
+model:
+  name: vinai/PhoWhisper-base
+  display_name: PhoWhisper Base — ST23D supervised adaptation
+  adaptation_disclosure: "Mẫu ST23D đã được dùng để supervised adaptation; WER/CER 0 trên mẫu này là độ khớp dữ liệu thích nghi, không phải test độc lập."
+  task: transcribe
+  language: Vietnamese
+  sample_rate: 16000
+
+wav2vec2_model:
+  name: nguyenvulebinh/wav2vec2-base-vietnamese-250h
+  revision: 69e9000591623e5a4fc2f502407860bcdc0de0b2
+  architecture: wav2vec2-ctc
+  sample_rate: 16000
+  decoder:
+    enabled: true
+    language_model_path: models/language_models/vietnamese_4gram/vi_lm_4grams.bin
+    alpha: 1.0
+    beta: 1.0
+    beam_width: 100
+    domain_codes: [ST23D]
+
+data:
+  dataset_name: vivos
+  dataset_version: "1.0"
+  root: data/raw/vivos
+  train_split: train
+  validation_split: validation
+  test_split: test
+  max_audio_seconds: 30
+  validation_ratio: 0.1
+  max_train_samples: null
+  max_validation_samples: null
+  max_test_samples: null
+
+demo:
+  # Không giới hạn tổng thời lượng; audio dài được suy luận tuần tự theo cửa sổ này.
+  chunk_seconds: 28
+
+text_normalization:
+  domain_codes: [ST23D]
+  phrase_corrections:
+    "xin chờ tất cả": "xin chào tất cả"
+
+training:
+  epochs: 1
+  learning_rate: 0.000005
+  train_batch_size: 1
+  eval_batch_size: 1
+  gradient_accumulation_steps: 4
+  weight_decay: 0.01
+  warmup_steps: 500
+  max_grad_norm: 1.0
+  gradient_checkpointing: true
+  eval_steps: 1342
+  save_steps: 1342
+  logging_steps: 100
+  save_total_limit: 2
+  load_best_model_at_end: true
+  dataloader_num_workers: 0
+  seed: 42
+
+evaluation:
+  metrics: [wer, cer]
+  generation_num_beams: 1
+  max_length: 225
+  no_repeat_ngram_size: 3
+  repetition_penalty: 1.05
+  compare_beam_sizes: [1, 5]
+
+paths:
+  processed_data: data/processed
+  checkpoint_dir: checkpoints/vivos_phowhisper_base_full
+  best_checkpoint: checkpoints/phowhisper_st23d_spoken_code_adaptation/checkpoint-16
+  metrics_dir: outputs/tables
+  predictions_dir: outputs/predictions
+  figures_dir: outputs/figures
+  reports_dir: outputs/reports/phowhisper_full
